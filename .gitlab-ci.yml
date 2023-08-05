@@ -1,41 +1,104 @@
-image: edbizarro/gitlab-ci-pipeline-php:7.3-alpine
+# Define pipeline stages
+stages:
+  - lint
+  - codestyle
+  - tests
 
 # Cache libraries in between jobs
 cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - vendor/
+  - key:
+      files:
+        - composer.lock
+    paths:
+      - vendor/
 
+# ENV variables
 variables:
   DOCKER_DRIVER: "overlay2"
-  GIT_SSL_NO_VERIFY: "true"
   XDEBUG_MODE: "coverage"
+  IMAGE: vshut/ci-cd-php8.2:1.7
 
-before_script:
-  - git config http.sslVerify "false"
-  - git config --global http.sslCAPath /etc/pki/tls/certs
+  # Fast Compression to speed up pipelines
+  FF_USE_FASTZIP: "true"
+  ARTIFACT_COMPRESSION_LEVEL: "fast"
+  CACHE_COMPRESSION_LEVEL: "fast"
+
+  # Composer
+  COMPOSER_DISCARD_CHANGES: "true"
+
+# Shared
+.php-version-cmd: &php-version-cmd
   - php -v
-  - composer install --prefer-dist --no-cache -n --no-progress --ignore-platform-req=ext-sockets
 
-# Define pipeline stages
-stages:
-  - codestyle
-  - tests
-  - deploy
+.cp-env-cmd: &cp-env-cmd
+  - cp .env.test .env || cp .env.testing .env || cp .env.dist .env || cp .env.example .env || true
+
+.composer-install-cmd: &composer-install-cmd
+  - composer install --no-cache --prefer-dist --no-interaction --no-progress --no-ansi --ignore-platform-req=ext-sockets
+
+# Scripts to run before each job
+before_script:
+  - *php-version-cmd
+  - *cp-env-cmd
+  - *composer-install-cmd
+
+.codestyle-job:
+  image: ${IMAGE}
+  stage: codestyle
+  dependencies: []
 
 php-cs-fixer:
-  stage: codestyle
+  extends: .codestyle-job
   script:
-    - composer run-script syntcheck
+    - ./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --allow-risky=yes --using-cache=no -v
 
 php-md:
-  stage: codestyle
+  extends: .codestyle-job
   script:
-    - composer run-script phpmd
+    - ./vendor/bin/phpmd src,tests text phpmd.ruleset.xml > .artifacts/phpmd-report.json
+  artifacts:
+    reports:
+      codequality: .artifacts/phpmd-report.json
 
-unit-tests:
-  stage: tests
-  image: edbizarro/gitlab-ci-pipeline-php:7.4-alpine
+php-stan:
+  extends: .codestyle-job
   script:
-    - composer run-script testrun
-    - composer run-script testcov
+    - ./vendor/bin/phpstan analyse --memory-limit=512M --no-progress --error-format gitlab > .artifacts/phpstan-report.json
+  artifacts:
+    reports:
+      codequality: .artifacts/phpstan-report.json
+
+.tests-job:
+  stage: tests
+  script:
+    - ./vendor/bin/phpunit --testdox --colors=never --coverage-xml .artifacts/.phpunit/phpunit-coverage-report.xml --coverage-html .artifacts/.phpunit/phpunit-coverage-report.html --coverage-text --log-junit .artifacts/.phpunit/report.xml --disallow-test-output --coverage-cobertura .artifacts/.phpunit/coverage.xml
+    - php check-code-coverage 100
+  dependencies: [ ]
+  artifacts:
+    reports:
+      junit: .artifacts/.phpunit/report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: phpunit-coverage.xml
+
+unit:
+  extends: .tests-job
+  image: ${IMAGE}
+
+.lint-job:
+  dependencies: [ ]
+  cache: []
+  before_script:
+    - ''
+
+composer:
+  extends: .lint-job
+  image: ${IMAGE}
+  stage: lint
+  rules:
+    - changes:
+        - composer.json
+        - composer.lock
+  script:
+    - composer --version
+    - composer validate --no-check-all --strict
