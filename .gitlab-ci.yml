@@ -36,8 +36,12 @@ variables:
 .composer-install-cmd: &composer-install-cmd
   - composer install --no-cache --prefer-dist --no-interaction --no-progress --no-ansi --ignore-platform-req=ext-sockets
 
+.create-artifacts-dir-cmd: &create-artifacts-dir-cmd
+  - mkdir -p .artifacts
+
 # Scripts to run before each job
 before_script:
+  - *create-artifacts-dir-cmd
   - *php-version-cmd
   - *cp-env-cmd
   - *composer-install-cmd
