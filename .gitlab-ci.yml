@@ -83,7 +83,7 @@ php-stan:
       junit: .artifacts/.phpunit/report.xml
       coverage_report:
         coverage_format: cobertura
-        path: phpunit-coverage.xml
+        path: .artifacts/.phpunit/phpunit-coverage.xml
 
 unit:
   extends: .tests-job
