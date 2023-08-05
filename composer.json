@@ -2,7 +2,7 @@
     "name": "vshut/factory",
     "description": "Library for generating objects, arrays in testing environment",
     "type": "library",
-    "version": "1.0.0",
+    "license": "MIT",
     "require": {
         "fakerphp/faker": "^1",
         "php": "^8.2"
