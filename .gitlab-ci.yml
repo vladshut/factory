@@ -76,7 +76,7 @@ php-stan:
   stage: tests
   script:
     - ./vendor/bin/phpunit --testdox --colors=never --coverage-xml .artifacts/.phpunit/phpunit-coverage-report.xml --coverage-html .artifacts/.phpunit/phpunit-coverage-report.html --coverage-text --log-junit .artifacts/.phpunit/report.xml --disallow-test-output --coverage-cobertura .artifacts/.phpunit/coverage.xml
-    - php check-code-coverage 100
+    - php check-code-coverage.php 100
   dependencies: [ ]
   artifacts:
     reports:
@@ -99,10 +99,6 @@ composer:
   extends: .lint-job
   image: ${IMAGE}
   stage: lint
-  rules:
-    - changes:
-        - composer.json
-        - composer.lock
   script:
     - composer --version
     - composer validate --no-check-all --strict
