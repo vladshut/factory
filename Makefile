@@ -49,7 +49,7 @@ test\:run:
 	@docker-compose exec app ./vendor/bin/phpunit --testdox --colors=never --coverage-xml .artifacts/.phpunit/phpunit-coverage-report.xml --coverage-html .artifacts/.phpunit/phpunit-coverage-report.html --coverage-text --log-junit .artifacts/.phpunit/report.xml --disallow-test-output
 
 test\:cov:
-	@docker-compose exec app php check-code-coverage 100
+	@docker-compose exec app php check-code-coverage.php .artifacts/.phpunit/phpunit-coverage-report.xml/index.xml 100
 
 synt\:fix:
 	@docker-compose exec app ./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php --using-cache=no -v --allow-risky=yes

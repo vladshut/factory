@@ -76,7 +76,7 @@ php-stan:
   stage: tests
   script:
     - ./vendor/bin/phpunit --testdox --colors=never --coverage-xml .artifacts/.phpunit/phpunit-coverage-report.xml --coverage-html .artifacts/.phpunit/phpunit-coverage-report.html --coverage-text --log-junit .artifacts/.phpunit/report.xml --disallow-test-output --coverage-cobertura .artifacts/.phpunit/coverage.xml
-    - php check-code-coverage.php 100
+    - php check-code-coverage.php .artifacts/.phpunit/phpunit-coverage-report.xml/index.xml 100
   dependencies: [ ]
   artifacts:
     reports:
