@@ -1,0 +1,41 @@
+image: edbizarro/gitlab-ci-pipeline-php:7.3-alpine
+
+# Cache libraries in between jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - vendor/
+
+variables:
+  DOCKER_DRIVER: "overlay2"
+  GIT_SSL_NO_VERIFY: "true"
+  XDEBUG_MODE: "coverage"
+
+before_script:
+  - git config http.sslVerify "false"
+  - git config --global http.sslCAPath /etc/pki/tls/certs
+  - php -v
+  - composer install --prefer-dist --no-cache -n --no-progress --ignore-platform-req=ext-sockets
+
+# Define pipeline stages
+stages:
+  - codestyle
+  - tests
+  - deploy
+
+php-cs-fixer:
+  stage: codestyle
+  script:
+    - composer run-script syntcheck
+
+php-md:
+  stage: codestyle
+  script:
+    - composer run-script phpmd
+
+unit-tests:
+  stage: tests
+  image: edbizarro/gitlab-ci-pipeline-php:7.4-alpine
+  script:
+    - composer run-script testrun
+    - composer run-script testcov

@@ -1,0 +1,49 @@
+{
+    "name": "vshut/factory",
+    "description": "Library for generating objects, arrays in testing environment",
+    "type": "library",
+    "version": "1.0.0",
+    "require": {
+        "fakerphp/faker": "^1",
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "ext-simplexml": "*",
+        "captainhook/captainhook": "6.0.x-dev",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpmd/phpmd": "^2.10",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^9.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vshut\\Factory\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "syntcheck": [
+            "./vendor/bin/php-cs-fixer fix --config=vendor/libraries/php-cs-fixer-config/.php-cs-fixer.php --dry-run --using-cache=no -v"
+        ],
+        "syntfix": [
+            "./vendor/bin/php-cs-fixer fix --config=vendor/libraries/php-cs-fixer-config/.php-cs-fixer.php --using-cache=no -v"
+        ],
+        "phpmd": [
+            "./vendor/bin/phpmd src,tests text vendor/libraries/php-md-config/phpmd.ruleset.xml"
+        ],
+        "testrun": [
+            "php vendor/bin/phpunit --colors=never --coverage-xml phpunit-coverage-report.xml --coverage-html phpunit-coverage-report.html --coverage-text --coverage-filter app"
+        ],
+        "testcov": [
+            "php check-code-coverage.php phpunit-coverage-report.xml/index.xml 70"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "prefer-stable": true
+}

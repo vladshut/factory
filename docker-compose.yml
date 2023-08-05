@@ -1,0 +1,14 @@
+version: "3.2"
+
+services:
+  app:
+    image: vshut/ci-cd-php8.2:1.7
+    container_name: factory
+    restart: on-failure
+    tty: true
+    stdin_open: true
+    environment:
+      - PHP_CS_FIXER_IGNORE_ENV=1
+      - XDEBUG_MODE=coverage
+    volumes:
+      - .:/var/www/html/:cached

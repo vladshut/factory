@@ -1,0 +1,39 @@
+{
+    "commit-msg": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "\\CaptainHook\\App\\Hook\\Message\\Action\\Beams",
+                "options": {
+                    "subjectLength": 50,
+                    "bodyLineLength": 72
+                },
+                "conditions": []
+            }
+        ]
+    },
+    "pre-commit": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "\\CaptainHook\\App\\Hook\\PHP\\Action\\Linting",
+                "options": [],
+                "conditions": []
+            },
+            {
+                "action": "composer run-script syntcheck",
+                "options": [],
+                "conditions": []
+            },
+            {
+                "action": "composer run-script testrun", "options": [],
+                "conditions": []
+            },
+            {
+                "action": "composer run-script testcov",
+                "options": [],
+                "conditions": []
+            }
+        ]
+    }
+}

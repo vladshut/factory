@@ -1,0 +1,104 @@
+# Define pipeline stages
+stages:
+  - lint
+  - codestyle
+  - tests
+
+# Cache libraries in between jobs
+cache:
+  - key:
+      files:
+        - composer.lock
+    paths:
+      - vendor/
+
+# ENV variables
+variables:
+  DOCKER_DRIVER: "overlay2"
+  XDEBUG_MODE: "coverage"
+  IMAGE: vshut/ci-cd-php8.2:1.7
+
+  # Fast Compression to speed up pipelines
+  FF_USE_FASTZIP: "true"
+  ARTIFACT_COMPRESSION_LEVEL: "fast"
+  CACHE_COMPRESSION_LEVEL: "fast"
+
+  # Composer
+  COMPOSER_DISCARD_CHANGES: "true"
+
+# Shared
+.php-version-cmd: &php-version-cmd
+  - php -v
+
+.cp-env-cmd: &cp-env-cmd
+  - cp .env.test .env || cp .env.testing .env || cp .env.dist .env || cp .env.example .env || true
+
+.composer-install-cmd: &composer-install-cmd
+  - composer install --no-cache --prefer-dist --no-interaction --no-progress --no-ansi --ignore-platform-req=ext-sockets
+
+# Scripts to run before each job
+before_script:
+  - *php-version-cmd
+  - *cp-env-cmd
+  - *composer-install-cmd
+
+.codestyle-job:
+  image: ${IMAGE}
+  stage: codestyle
+  dependencies: []
+
+php-cs-fixer:
+  extends: .codestyle-job
+  script:
+    - ./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --allow-risky=yes --using-cache=no -v
+
+php-md:
+  extends: .codestyle-job
+  script:
+    - ./vendor/bin/phpmd src,tests text phpmd.ruleset.xml > .artifacts/phpmd-report.json
+  artifacts:
+    reports:
+      codequality: .artifacts/phpmd-report.json
+
+php-stan:
+  extends: .codestyle-job
+  script:
+    - ./vendor/bin/phpstan analyse --memory-limit=512M --no-progress --error-format gitlab > .artifacts/phpstan-report.json
+  artifacts:
+    reports:
+      codequality: .artifacts/phpstan-report.json
+
+.tests-job:
+  stage: tests
+  script:
+    - ./vendor/bin/phpunit --testdox --colors=never --coverage-xml .artifacts/.phpunit/phpunit-coverage-report.xml --coverage-html .artifacts/.phpunit/phpunit-coverage-report.html --coverage-text --log-junit .artifacts/.phpunit/report.xml --disallow-test-output --coverage-cobertura .artifacts/.phpunit/coverage.xml
+    - php check-code-coverage 100
+  dependencies: [ ]
+  artifacts:
+    reports:
+      junit: .artifacts/.phpunit/report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: phpunit-coverage.xml
+
+unit:
+  extends: .tests-job
+  image: ${IMAGE}
+
+.lint-job:
+  dependencies: [ ]
+  cache: []
+  before_script:
+    - ''
+
+composer:
+  extends: .lint-job
+  image: ${IMAGE}
+  stage: lint
+  rules:
+    - changes:
+        - composer.json
+        - composer.lock
+  script:
+    - composer --version
+    - composer validate --no-check-all --strict

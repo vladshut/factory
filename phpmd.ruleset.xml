@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<ruleset name="WayMore Ruleset"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0
+                     http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="
+                     http://pmd.sf.net/ruleset_xml_schema.xsd">
+    <description>
+        Custom rules for waymore projects
+    </description>
+
+    <rule ref="rulesets/unusedcode.xml"/>
+    <rule ref="rulesets/codesize.xml"/>
+
+    <rule ref="rulesets/design.xml">
+        <exclude name="CouplingBetweenObjects"/>
+    </rule>
+
+    <rule ref="rulesets/cleancode.xml">
+        <!-- In order to avoid a lot of except statements for Laravel\Lumen (Str::method(), Arr::method(), ...). -->
+        <exclude name="StaticAccess"/>
+    </rule>
+
+    <rule ref="rulesets/controversial.xml">
+        <!-- In order to allow underscores in test method names and avoid a lot of except statements. -->
+        <exclude name="CamelCaseMethodName"/>
+    </rule>
+
+    <rule ref="rulesets/naming.xml">
+        <exclude name="LongVariable"/>
+        <exclude name="ShortVariable"/>
+        <exclude name="ShortMethodName"/>
+    </rule>
+
+    <!-- Increase maximum length of variable name in order to have more descriptive variable names. -->
+    <rule ref="rulesets/naming.xml/LongVariable">
+        <properties>
+            <property name="maximum">
+                <value>30</value>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Allow short variable names: $id, $ip -->
+    <rule ref="rulesets/naming.xml/ShortVariable">
+        <properties>
+            <property name="exceptions">
+                <value>id</value>
+                <value>ip</value>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Allow short variable names: $up -->
+    <rule ref="rulesets/naming.xml/ShortMethodName">
+        <properties>
+            <property name="exceptions">
+                <value>up</value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
