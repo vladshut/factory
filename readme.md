@@ -1,5 +1,4 @@
 # vladshut/factory
----
 
 [![pipeline status](https://gitlab.com/vladshut/factory/badges/master/pipeline.svg)](https://gitlab.com/vladshut/factory/-/commits/master)
 [![coverage report](https://gitlab.com/vladshut/factory/badges/master/coverage.svg)](https://gitlab.com/vladshut/factory/-/commits/master)
