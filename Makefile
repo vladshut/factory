@@ -42,6 +42,9 @@ comp\:req:
 comp\:req-dev:
 	@docker-compose exec app composer require --dev $(RUN_ARGS)
 
+comp\:rem:
+	@docker-compose exec app composer remove $(RUN_ARGS)
+
 ch\:install:
 	@docker-compose exec app ./vendor/bin/captainhook install --run-mode=docker --run-exec="docker-compose exec -T app"
 
@@ -62,3 +65,6 @@ php-md:
 
 php-stan:
 	@docker-compose exec app ./vendor/bin/phpstan analyse --memory-limit=512M --no-progress --error-format gitlab > .artifacts/phpstan-report.json
+
+check: synt\:check php-md php-stan test\:run test\:cov
+
