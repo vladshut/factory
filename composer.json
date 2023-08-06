@@ -1,5 +1,5 @@
 {
-    "name": "vshut/factory",
+    "name": "vladshut/factory",
     "description": "Library for generating objects, arrays in testing environment",
     "type": "library",
     "license": "MIT",

@@ -5,7 +5,7 @@ Base classes for creating factories for data (arrays, objects).
 Inspired by laravel [factory library](https://laravel.com/docs/10.x/eloquent-factories). 
 
 ## Installation
-`composer require --dev vshut/factory`
+`composer require --dev vladshut/factory`
 
 ## Usage examples
 ```php
@@ -194,7 +194,5 @@ $users = UserFactory::new()->makeMany($states); // will create 2 users: one with
 `make test:run`
 
 ## TODO
-- [ ] Move project to gitlab
-- [ ] Set up CI/CD
 - [ ] Add captainhook
 - [ ] Publish package to packagist
