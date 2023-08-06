@@ -192,7 +192,3 @@ $users = UserFactory::new()->makeMany($states); // will create 2 users: one with
 ## Tests
 
 `make test:run`
-
-## TODO
-- [ ] Set up captainhook
-- [ ] Publish package to packagist
