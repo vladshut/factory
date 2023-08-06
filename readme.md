@@ -1,4 +1,4 @@
-# vshut/factory
+# vladshut/factory
 
 Base classes for creating factories for data (arrays, objects).
 
