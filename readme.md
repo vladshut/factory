@@ -199,4 +199,4 @@ $users = UserFactory::new()->makeMany($states); // will create 2 users: one with
 
 ---
 
-![buy me a coffe](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)
+[![buy me a coffe](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/vshut)
