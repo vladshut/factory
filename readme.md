@@ -1,5 +1,10 @@
 # vladshut/factory
+---
 
+[![pipeline status](https://gitlab.com/vladshut/factory/badges/master/pipeline.svg)](https://gitlab.com/vladshut/factory/-/commits/master)
+[![coverage report](https://gitlab.com/vladshut/factory/badges/master/coverage.svg)](https://gitlab.com/vladshut/factory/-/commits/master)
+
+---
 Base classes for creating factories for data (arrays, objects).
 
 Inspired by laravel [factory library](https://laravel.com/docs/10.x/eloquent-factories). 
@@ -192,3 +197,7 @@ $users = UserFactory::new()->makeMany($states); // will create 2 users: one with
 ## Tests
 
 `make test:run`
+
+---
+
+![buy me a coffe](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)
